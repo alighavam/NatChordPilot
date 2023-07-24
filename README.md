@@ -1,2 +1,2 @@
-# NC_EMG_pilot
+# NatChordPilot
 natural hand usage - chord EMG pilot experiment
