@@ -35,11 +35,14 @@ for i = trials
     if (row.trialPoint==0)
         row.RT = 10000;   % correction for execution error trials
     end
-    C = addstruct(C,row,'row','force');
-    C.mov(D.TN(i)) = mov(D.TN(i));
-    ANA=addstruct(ANA,C,'row','force');
+    C = addstruct(C, row, 'row', 'force');
+    C.mov = mov(D.TN(i));
+    ANA = addstruct(ANA, C, 'row', 'force');
 end
 
+out_file_name = ['analysis/', subj_name, '.mat'];
+
+save(out_file_name,'-struct','ANA');
 
 
 
