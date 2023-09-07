@@ -1,7 +1,5 @@
+function NCP_prep(subj_name)
 % Ali Ghavampour 2023 - Diedrichsen & Pruszynski lab
-clear;
-clc;
-close all;
 
 % setting paths:
 usr_path = userpath;
@@ -12,7 +10,7 @@ usr_path = usr_path(1:end-17);
 addpath(genpath(fullfile(usr_path,'Desktop/matlab/dataframe-2016.1')),'-begin')
 
 % Loading data:
-subj_name = 'subj01';
+% subj_name = 'subj01';
 dat_file_name = ['data/',subj_name,'/','efc1_',...
                  num2str(str2num(subj_name(end-1:end))),'.dat'];
 D = dload(dat_file_name);
