@@ -13,12 +13,12 @@ function [riseTimes,riseIdx] = detectTrig(trigSig,timeTrig,ampThreshold,numTrial
 % ampThreshold = 0.4;
 
 % trigger detection
-trigSig = -trigSig/max(trigSig);    % normalizing the value of trigger.
+trigSig = trigSig/max(trigSig);    % normalizing the value of trigger.
                                     % IMPORTANT NOTE: 
                                     % you might have to remove the 
                                     % negative sign based on how you
                                     % generate and record your trigger.
-                                    % You can simply add an statement to
+                                    % You can simply add a condition to
                                     % automatically determine if the negative
                                     % sign is needed or not. I just wasn't
                                     % much in mood to do it.
@@ -34,15 +34,15 @@ trigSig = -trigSig/max(trigSig);    % normalizing the value of trigger.
 diffTrig = diff(trigSig);
 diffTrig(diffTrig < ampThreshold) = 0;
 [pks,locs] = findpeaks(diffTrig);
-pks = pks(1:2:end);
-locs = locs(1:2:end);
+
+% pks = pks(1:2:end);
+% locs = locs(1:2:end);
 fprintf("\nNum Trigs Detected = %d\n",length(locs))
 fprintf("Num Trials in Run = %d\n",numTrials)
 fprintf("====NumTrial should be equal to NumTrigs====\n\n\n")
 
 riseIdx = locs;
 riseTimes = timeTrig(riseIdx);
-
 
 if (debugging)
     figure;
