@@ -24,6 +24,46 @@ for i = trials
         % load mov file for the block
         fprintf("Loading .mov file %d.\n",D.BN(i))
         mov = movload(['data/' subj_name '/' 'efc1_' num2str(str2num(subj_name(end-1:end))) '_' num2str(D.BN(i),'%02d') '.mov']);
+        
+        % loading EMG data of the block:
+        fprintf("Loading emg file %d.\n",D.BN(i))
+        emg_data = readtable(['data/' subj_name '/emg_' num2str(D.BN(i),'%02d') '.csv']);
+        emg_data(1:3,:) = [];
+
+        % Extracting triggers of the emg:
+        t = table2array(emg_data(:,1));
+        trig = table2array(emg_data(:,2));
+
+        % detecting trial start times from the EMGs:
+        [~,riseIdx,~,fallIdx] = detectTrig(trig,t,0.4,sum(D.BN == D.BN(i)),1);
+        if (length(riseIdx) ~= length(fallIdx) || length(riseIdx) ~= sum(D.BN == D.BN(i)))
+            error('Trigger detection went wrong! Block Number = %d',D.BN(i))
+        end
+        
+        % emg channels to selected from the emg table:
+        emg_channels = 4:2:22;
+        % electrode locations from 4 to 22 in order:
+        emg_locs = {'extensor index', 'extensor thumb', 'flexor thumb', 'flexor pinky', 'flexor ring', 'flexor middle',...
+                    'extensor ring', 'extensor pinky', 'flexor index', 'extensor middle'};
+        emg_locs_coded = {'e2','e1','f1','f5','f4','f3','e4','e5','f2','e3'};
+        
+        emg = cell(length(riseIdx),1);
+        for j = 1:length(riseIdx)
+            % start of a trial:
+            idx1 = riseIdx(j);
+        
+            % end of a trial:
+            idx2 = fallIdx(j);
+            
+            % extracting EMG of the trial. Should be T by 10(number of electrodes)
+            emg_trial = table2array(emg_data(idx1:idx2,emg_channels));
+        
+            % preprocessing the EMG signals:
+            
+            % adding trials to emg cell:
+            emg{j} = emg_trial;
+        end
+
         oldBlock = D.BN(i);
     end
     fprintf('Block: %d , Trial: %d\n',D.BN(i),D.TN(i));
@@ -35,6 +75,7 @@ for i = trials
     end
     C = addstruct(C, row, 'row', 'force');
     C.mov = mov(D.TN(i));
+    C.emg = emg(D.TN(i));
     ANA = addstruct(ANA, C, 'row', 'force');
 end
 

@@ -1,4 +1,4 @@
-function my_fft(x, fs)
+function [f, P1] = my_fft(x, fs)
 % my_fft calculates the single sided spectrum of the input signals.
 %
 %   Inputs:
@@ -34,10 +34,21 @@ n = 2^nextpow2(L);
 Y = fft(x,n);
 
 % two sided spectrum of x:
-P2 = abs(Y/L);
+P2 = abs(Y/n);
 
 % one sided spectrum of x:
-P1 = P2()
+P1 = P2(1:n/2+1,:);
+P1(2:end-1,:) = 2*P1(2:end-1,:);
+
+% defining the frequency domain:
+f = fs/n*(0:(n/2));
+
+% plotting:
+figure;
+plot(f,P1(:,1),"LineWidth",2,'Color','k') 
+title("Single-Sided Amplitude Spectrum")
+xlabel("f (Hz)")
+ylabel("|P1(f)|")
 
 
 

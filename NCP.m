@@ -13,6 +13,7 @@ NCP_prep(subj_name)
 clc
 
 % load EMG:
+addpath('functions/')
 subj_name = 'subj01';
 x = readtable(['data/' subj_name '/emg_01.csv']);
 x(1:3,:) = [];
@@ -35,7 +36,8 @@ emg_locs = {'extensor index', 'extensor thumb', 'flexor thumb', 'flexor pinky', 
             'extensor ring', 'extensor pinky', 'flexor index', 'extensor middle'};
 emg_locs_coded = {'e2','e1','f1','f5','f4','f3','e4','e5','f2','e3'};
 
-for i = 1:length(riseIdx)-1
+% emg_cell = cell()
+for i = 1:length(riseIdx)
     % start of a trial:
     idx1 = riseIdx(i);
 
@@ -47,7 +49,7 @@ for i = 1:length(riseIdx)-1
 
     % preprocessing the EMG signals:
 
-    % 
+    % saving the EMGs.
     
 end
 
