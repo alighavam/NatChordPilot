@@ -18,6 +18,10 @@ ANA = [];
 
 trials = 1:length(D.BN);
 
+% designing filter for bandpass filtering:
+hd = design_filter;
+freqz(hd)
+
 oldBlock = -1;
 for i = trials
     if (oldBlock ~= D.BN(i))
@@ -29,13 +33,15 @@ for i = trials
         fprintf("Loading emg file %d.\n",D.BN(i))
         emg_data = readtable(['data/' subj_name '/emg_' num2str(D.BN(i),'%02d') '.csv']);
         emg_data(1:3,:) = [];
+        emg_data = table2array(emg_data);
 
         % Extracting triggers of the emg:
-        t = table2array(emg_data(:,1));
-        trig = table2array(emg_data(:,2));
+        t = emg_data(:,1);
+        trig = emg_data(:,2);
 
         % detecting trial start times from the EMGs:
         [~,riseIdx,~,fallIdx] = detectTrig(trig,t,0.4,sum(D.BN == D.BN(i)),1);
+        % if number of triggers did not make sense, throw and error:
         if (length(riseIdx) ~= length(fallIdx) || length(riseIdx) ~= sum(D.BN == D.BN(i)))
             error('Trigger detection went wrong! Block Number = %d',D.BN(i))
         end
@@ -47,6 +53,14 @@ for i = trials
                     'extensor ring', 'extensor pinky', 'flexor index', 'extensor middle'};
         emg_locs_coded = {'e2','e1','f1','f5','f4','f3','e4','e5','f2','e3'};
         
+        % filtering the EMG signals:
+        fprintf("Filtering the raw EMG signals:\n\n")
+        for j = emg_channels
+            fprintf("Filtering channels %d/%d...\n",(0.5*j - 1),length(emg_channels))
+            emg_data(:,j) = filtfilt(hd.Numerator, 1, emg_data(:,j));
+        end
+
+
         emg = cell(length(riseIdx),1);
         for j = 1:length(riseIdx)
             % start of a trial:
@@ -56,9 +70,11 @@ for i = trials
             idx2 = fallIdx(j);
             
             % extracting EMG of the trial. Should be T by 10(number of electrodes)
-            emg_trial = table2array(emg_data(idx1:idx2,emg_channels));
+            emg_trial = emg_data(idx1:idx2,emg_channels);
         
             % preprocessing the EMG signals:
+            % bandpass butterworth filter:
+
             
             % adding trials to emg cell:
             emg{j} = emg_trial;
