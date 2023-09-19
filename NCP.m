@@ -130,13 +130,15 @@ beta = (x_train' * x_train)^-1 * x_train' * y_train;
 
 % variance explained train:
 y_hat = x_train * beta;
-
+RSS = mean(sum((y_hat - y_train).^2,1));
+TSS = mean(sum((y_train - repmat(mean(y_train,1),size(y_train,1),1)).^2,1));
+R2_train = (1 - RSS/TSS) * 100
 
 % variance explained test:
-% y_hat = x_test * beta;
-% RSS = mean(mean((y_hat-y_test).^2,1));
-% TSS = mean((y_test - repmat(mean(y_test,1), size(y_hat,1),1 ))' * (y_test - repmat(mean(y_test,1), size(y_test,1), 1)));
-% R2_test = ESS/TSS * 100
+y_hat = x_test * beta;
+RSS = mean(sum((y_hat - y_test).^2,1));
+TSS = mean(sum((y_test - repmat(mean(y_test,1),size(y_test,1),1)).^2,1));
+R2_test = (1 - RSS/TSS) * 100
 
 
 %% Regression - EMG explained by models
