@@ -1,4 +1,4 @@
-function Hd = design_filter
+function Hd = bandpass_filter
 %FILTERDESIGN Returns a discrete-time filter object.
 
 % MATLAB Code
