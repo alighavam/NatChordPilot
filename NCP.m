@@ -170,14 +170,38 @@ sep_chords = sepChordVec(dat_select.chordID);
 dat_select = getrow(dat_select,sep_chords{1,2});
 
 % separating session data:
-
-
+dat_sess01 = getrow(dat_select,find(dat_select.BN==1));
+dat_sess02 = getrow(dat_select,find(dat_select.BN>1));
 
 % Building Design Matrices ======
 
 % Saturated Model:
+single_finger_chords = unique(dat_sess01.chordID);
+X_sess01 = zeros(length(dat_sess01.TN),length(single_finger_chords));
+X_sess02 = zeros(length(dat_sess02.TN),length(single_finger_chords));
+for i = 1:length(single_finger_chords)
+    X_sess01(:,i) = dat_sess01.chordID == single_finger_chords(i);
+    X_sess02(:,i) = dat_sess02.chordID == single_finger_chords(i);
+end
+
+% training on each session:
+beta_sess01 = (X_sess01' * X_sess01)^-1 * X_sess01' * dat_sess01.emg_hold_avg;
+beta_sess02 = (X_sess02' * X_sess02)^-1 * X_sess02' * dat_sess02.emg_hold_avg;
+
+% testing within session:
+y_pred_sess01 = X_sess01 * beta_sess01;
+y_pred_sess02 = X_sess02 * beta_sess02;
+% Variance explained by the models:
+[R2_sess01_within,~,~] = calc_R2(dat_sess01.emg_hold_avg, y_pred_sess01)
+[R2_sess02_wihtin,~,~] = calc_R2(dat_sess02.emg_hold_avg, y_pred_sess02)
 
 
+% test across session
+y_pred_sess01 = X_sess01 * beta_sess02;
+y_pred_sess02 = X_sess02 * beta_sess01;
+% Variance explained by the models:
+[R2_sess01_across,~,~] = calc_R2(dat_sess01.emg_hold_avg, y_pred_sess01)
+[R2_sess02_across,~,~] = calc_R2(dat_sess02.emg_hold_avg, y_pred_sess02)
 
 
 
