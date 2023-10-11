@@ -195,14 +195,12 @@ y_pred_sess02 = X_sess02 * beta_sess02;
 [R2_sess01_within,~,~] = calc_R2(dat_sess01.emg_hold_avg, y_pred_sess01)
 [R2_sess02_wihtin,~,~] = calc_R2(dat_sess02.emg_hold_avg, y_pred_sess02)
 
-
-% test across session
+% test across sessions:
 y_pred_sess01 = X_sess01 * beta_sess02;
 y_pred_sess02 = X_sess02 * beta_sess01;
-% Variance explained by the models:
-[R2_sess01_across,~,~] = calc_R2(dat_sess01.emg_hold_avg, y_pred_sess01)
-[R2_sess02_across,~,~] = calc_R2(dat_sess02.emg_hold_avg, y_pred_sess02)
-
+% R of the models:
+gamma_sess01_across = mean(cos_angle(dat_sess01.emg_hold_avg, y_pred_sess01))
+gamma_sess02_across = mean(cos_angle(dat_sess02.emg_hold_avg, y_pred_sess02))
 
 
 %% PLOTS
