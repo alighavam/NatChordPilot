@@ -7,19 +7,22 @@ import numpy as np
 import pandas as pd
 
 def gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, fileNameBase):
-    # function for making the first run - single finger
+    # function for making the first and fourth run; single finger. First run happens in the first session and second run in the second session.
 
     # turning chords list into numpy array:
     single_finger_chords = np.array(single_finger_chords)
 
     # repeating chords for nChunks number:
     single_finger_chords = np.repeat(single_finger_chords, nChunks, axis=0)
+    single_finger_chords_set2 = np.copy(single_finger_chords)
 
     # shuffling the chords:
     np.random.shuffle(single_finger_chords)
+    np,random.shuffle(single_finger_chords_set2)
 
     # repeating the chords:
     single_finger_chords = np.repeat(single_finger_chords, int(nRep/nChunks), axis=0)
+    single_finger_chords_set2 = np.repeat(single_finger_chords_set2, int(nRep/nChunks), axis=0)
 
     # generating the columns:
     col01 = subNum * np.ones(np.size(single_finger_chords,0), dtype=int)
@@ -37,9 +40,12 @@ def gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum,
     df['feedbackTime'] = col05
     df['iti'] = col06
 
-    # saving the first run dataframe:
-    fname = fileNameBase + f"{1:02}" + '.tgt'
-    df.to_csv('target/'+fname, sep='\t', index=False)
+    # saving the first and fourth run dataframes:
+    fname01 = fileNameBase + f"{1:02}" + '.tgt'
+    fname02 = fileNameBase + f"{4:02}" + '.tgt'
+    df.to_csv('target/'+fname01, sep='\t', index=False)
+    df.to_csv('target/'+fname02, sep='\t', index=False)
+
 
 def gen_chords(chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, fileNameBase):
     # function to generate target files for the chords - Note that chords are hard coded in the pilot study. Just randomly selected some of the most difficut chords
@@ -114,10 +120,11 @@ column_names = ['subNum', 'chordID', 'planTime', 'execMaxTime', 'feedbackTime', 
 
 # setting the subject number !!!-------- Don't forget to change --------!!!:
 subNum = 2 
-fileNameBase = 'natChord_subj' + f"{subNum:02}" + '_run'
+fileNameBase_sf = 'natChord_sf_subj' + f"{subNum:02}" + '_run'
+filenameBase_chord = 'narChord_chord_subj' + f"{subNum:02}" + '_run'
 
 # generating and saving the target file for single finger run:
-gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, fileNameBase)
+gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, fileNameBase_sf)
 
 # generating and saving the target file for chord runs:
-gen_chords(chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, fileNameBase)
+gen_chords(chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, filenameBase_chord)
