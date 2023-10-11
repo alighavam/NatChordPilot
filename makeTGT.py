@@ -40,6 +40,9 @@ def gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum,
     df['feedbackTime'] = col05
     df['iti'] = col06
 
+    df2 = pd.DataFrame(columns=column_names)
+    
+
     # saving the first and fourth run dataframes:
     fname01 = fileNameBase + f"{1:02}" + '.tgt'
     fname02 = fileNameBase + f"{4:02}" + '.tgt'
