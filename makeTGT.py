@@ -21,8 +21,8 @@ def gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum,
     np,random.shuffle(single_finger_chords_set2)
 
     # repeating the chords:
-    single_finger_chords = np.repeat(single_finger_chords, int(nRep/nChunks), axis=0)
-    single_finger_chords_set2 = np.repeat(single_finger_chords_set2, int(nRep/nChunks), axis=0)
+    single_finger_chords = np.repeat(single_finger_chords, nRep, axis=0)
+    single_finger_chords_set2 = np.repeat(single_finger_chords_set2, nRep, axis=0)
 
     # generating the columns:
     col01 = subNum * np.ones(np.size(single_finger_chords,0), dtype=int)
@@ -41,13 +41,18 @@ def gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum,
     df['iti'] = col06
 
     df2 = pd.DataFrame(columns=column_names)
-    
+    df2['subNum'] = col01
+    df2['chordID'] = single_finger_chords_set2
+    df2['planTime'] = col03
+    df2['execMaxTime'] = col04
+    df2['feedbackTime'] = col05
+    df2['iti'] = col06
 
-    # saving the first and fourth run dataframes:
+    # saving the dataframe of single finger runs:
     fname01 = fileNameBase + f"{1:02}" + '.tgt'
-    fname02 = fileNameBase + f"{4:02}" + '.tgt'
+    fname02 = fileNameBase + f"{6:02}" + '.tgt'
     df.to_csv('target/'+fname01, sep='\t', index=False)
-    df.to_csv('target/'+fname02, sep='\t', index=False)
+    df2.to_csv('target/'+fname02, sep='\t', index=False)
 
 
 def gen_chords(chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, fileNameBase):
@@ -58,20 +63,24 @@ def gen_chords(chords, column_names, nChunks, nRep, subNum, planTime, execMaxTim
     # turning chords list into numpy array:
     chords = np.array(chords)
 
-    # repeating chords for nChunks number:
-    chords = np.repeat(chords, nChunks, axis=0)
+    # repeating chords:
+    chords = np.repeat(chords, 2, axis=0)
+    chords_set2 = np.copy(chords)
 
     # shuffling the chords:
     np.random.shuffle(chords)
+    np.random.shuffle(chords_set2)
 
     # dividing chords into runs:
-    nRuns = nChunks # number of runs to divide. the value is arbitrary. I just selected in a way that the number of chords is dividable by this number.
+    nRuns = 4 # number of runs to divide. the value is arbitrary. I just selected in a way that the number of chords is dividable by this number and the runs are not too long.
     divisions = np.split(chords, nRuns)
+    divisions_set2 = np.split(chords_set2, nRuns)
 
     # looping through divisions and creating target files:
     for i in range(len(divisions)):
         # repeating the chords:
-        chords_tmp = np.repeat(divisions[i], int(nRep/nChunks), axis=0)
+        chords_tmp = np.repeat(divisions[i], nRep, axis=0)
+        chords_tmp_set2 = np.repeat(divisions_set2[i], nRep, axis=0)
 
         # generating the target file columns:
         col01 = subNum * np.ones(np.size(chords_tmp,0), dtype=int)
@@ -89,9 +98,19 @@ def gen_chords(chords, column_names, nChunks, nRep, subNum, planTime, execMaxTim
         df['feedbackTime'] = col05
         df['iti'] = col06
 
+        df2 = pd.DataFrame(columns=column_names)
+        df2['subNum'] = col01
+        df2['chordID'] = chords_tmp_set2
+        df2['planTime'] = col03
+        df2['execMaxTime'] = col04
+        df2['feedbackTime'] = col05
+        df2['iti'] = col06
+
         # saving the dataframe:
-        fname = fileNameBase + f"{i+2:02}" + '.tgt'
-        df.to_csv('target/'+fname, sep='\t', index=False)
+        fname01 = fileNameBase + f"{i+2:02}" + '.tgt'
+        fname02 = fileNameBase + f"{i+7:02}" + '.tgt'
+        df.to_csv('target/'+fname01, sep='\t', index=False)
+        df2.to_csv('target/'+fname02, sep='\t', index=False)
 
 
 # Chords definition:
@@ -110,7 +129,7 @@ chords = [int(''.join(map(str, sublist))) for sublist in chords]
 
 # Params:
 nChords = len(chords)   # number of chords
-nRep = 20           # number of repetition of each chord
+nRep = 5            # number of repetition of each chord
 nChunks = 4         # number of chunks to repeat chords
 planTime = 500      # time for planning
 execMaxTime = 10000 # maximum time for execution
@@ -122,9 +141,9 @@ column_names = ['subNum', 'chordID', 'planTime', 'execMaxTime', 'feedbackTime', 
 
 
 # setting the subject number !!!-------- Don't forget to change --------!!!:
-subNum = 2 
-fileNameBase_sf = 'natChord_sf_subj' + f"{subNum:02}" + '_run'
-filenameBase_chord = 'narChord_chord_subj' + f"{subNum:02}" + '_run'
+subNum = 1 
+fileNameBase_sf = 'natChord_subj' + f"{subNum:02}" + '_run'
+filenameBase_chord = 'natChord_subj' + f"{subNum:02}" + '_run'
 
 # generating and saving the target file for single finger run:
 gen_single_finger(single_finger_chords, column_names, nChunks, nRep, subNum, planTime, execMaxTime, feedbackTime, iti, fileNameBase_sf)
