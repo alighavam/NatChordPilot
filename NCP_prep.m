@@ -1,14 +1,6 @@
 function NCP_prep(subj_name)
 % Ali Ghavampour 2023 - Diedrichsen & Pruszynski lab
 
-% setting paths:
-usr_path = userpath;
-usr_path = usr_path(1:end-17);
-
-
-% Adding required tools and packages:
-addpath(genpath(fullfile(usr_path,'Desktop/matlab/dataframe-2016.1')),'-begin')
-
 % Loading data:
 % subj_name = 'subj01';
 dat_file_name = ['data/',subj_name,'/','efc1_',...

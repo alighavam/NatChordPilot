@@ -141,7 +141,7 @@ column_names = ['subNum', 'chordID', 'planTime', 'execMaxTime', 'feedbackTime', 
 
 
 # setting the subject number !!!-------- Don't forget to change --------!!!:
-subNum = 1 
+subNum = 5
 fileNameBase_sf = 'natChord_subj' + f"{subNum:02}" + '_run'
 filenameBase_chord = 'natChord_subj' + f"{subNum:02}" + '_run'
 

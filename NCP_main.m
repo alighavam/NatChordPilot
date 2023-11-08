@@ -269,7 +269,79 @@ end
 sgtitle(num2str(chords(chord_num)))
 
 
+%% 
+clear;
+close all;
+clc;
 
+data = load('analysis/subj01.mat');
+
+emg_locs_coded = ["e2";"e1";"f1";"f5";"f4";"f3";"e4";"e5";"f2";"e3"];
+channels = [3,9,6,5,4,2,1,10,7,8];
+
+emg_locs_coded = emg_locs_coded(channels,:);
+
+chords = unique(data.chordID(data.BN<=3 & data.trialCorr==1));
+
+chords_sorted = [29999, 92999, 99299, 99929, 99992, 19999, 91999, 99199, 99919, 99991];
+[i,~] = find(chords == chords_sorted);
+chords = [chords_sorted'; chords(setdiff(1:length(chords),i))];
+chords(chords == 22121) = [];
+
+chord_patterns_sess01 = zeros(length(chords),length(channels));
+
+for i = 1:length(chords)
+    tmp_emg_avg = data.emg_hold_avg(data.BN<=3 & data.trialCorr==1 & data.chordID==chords(i),:);
+    tmp_emg_avg = mean(tmp_emg_avg(:,channels), 1);
+    chord_patterns_sess01(i,:) = tmp_emg_avg;
+end
+
+figure;
+pcolor([[chord_patterns_sess01, zeros(size(chord_patterns_sess01,1),1)] ; zeros(1,size(chord_patterns_sess01,2)+1)])
+colorbar
+
+ax = gca;
+
+set(ax,'YTick',(1:size(chord_patterns_sess01,1))+0.5)
+set(ax,'YTickLabel',chords)
+
+set(ax,'XTick', (1:size(emg_locs_coded,1))+0.5)
+set(ax,'XTickLabel',emg_locs_coded)
+
+set(gca,'YDir','reverse')
+title('session 1')
+
+
+
+chords = unique(data.chordID(data.BN>3 & data.trialCorr==1));
+
+chords_sorted = [29999, 92999, 99299, 99929, 99992, 19999, 91999, 99199, 99919, 99991];
+[i,j] = find(chords == chords_sorted);
+chords = [chords_sorted'; chords(setdiff(1:length(chords),i))];
+
+chord_patterns_sess02 = zeros(length(chords),length(channels));
+
+for i = 1:length(chords)
+    tmp_emg_avg = data.emg_hold_avg(data.BN>3 & data.trialCorr==1 & data.chordID==chords(i),:);
+    tmp_emg_avg = mean(tmp_emg_avg(:,channels), 1);
+    chord_patterns_sess02(i,:) = tmp_emg_avg;
+end
+
+figure;
+pcolor([[chord_patterns_sess02, zeros(size(chord_patterns_sess02,1),1)] ; zeros(1,size(chord_patterns_sess02,2)+1)])
+colorbar
+
+ax = gca;
+
+set(ax,'YTick',(1:size(chord_patterns_sess02,1))+0.5)
+set(ax,'YTickLabel',chords)
+
+set(ax,'XTick', (1:size(emg_locs_coded,1))+0.5)
+set(ax,'XTickLabel',emg_locs_coded)
+
+set(gca,'YDir','reverse')
+
+title('session 2')
 
 
 
