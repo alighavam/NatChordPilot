@@ -147,6 +147,7 @@ TSS = mean(sum((y_test - repmat(mean(y_test,1),size(y_test,1),1)).^2,1));
 R2_test = (1 - RSS/TSS) * 100
 
 
+
 %% Regression - EMG explained by models
 clear; 
 clc;
@@ -310,7 +311,6 @@ set(ax,'XTickLabel',emg_locs_coded)
 
 set(gca,'YDir','reverse')
 title('session 1')
-
 
 
 chords = unique(data.chordID(data.BN>3 & data.trialCorr==1));
